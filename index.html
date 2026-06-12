@@ -19,12 +19,13 @@
   }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* Lock screen */
+  /* Hộp thoại đăng nhập: chỉ hiện khi bấm nút ở góc */
   .lock-screen {
-    position: fixed; inset: 0; background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000; flex-direction: column; gap: 0;
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; flex-direction: column; gap: 0; padding: 16px;
   }
+  .lock-screen.show { display: flex; }
   .lock-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 360px;
@@ -145,25 +146,25 @@
 </head>
 <body>
 
-<!-- Màn hình khóa -->
-<div class="lock-screen" id="lock-screen">
+<!-- Hộp thoại đăng nhập; trang vẫn xem được khi hộp này đóng -->
+<div class="lock-screen" id="lock-screen" onclick="if(event.target===this) closeLogin()">
   <div class="lock-card">
-    <div class="lock-icon">🏕️</div>
-    <div class="lock-title">Chuẩn bị dã ngoại</div>
-    <div class="lock-sub">Nhập mật khẩu để chỉnh sửa, hoặc xem không cần mật khẩu</div>
+    <div class="lock-icon">🔐</div>
+    <div class="lock-title">Đăng nhập chỉnh sửa</div>
+    <div class="lock-sub">Nhập mật khẩu nhóm để thêm, sửa, xóa và đánh dấu tác vụ</div>
     <div class="lock-input-wrap">
       <input class="lock-input" type="password" id="pw-input" placeholder="Mật khẩu nhóm..."
-        onkeydown="if(event.key==='Enter') doLogin()">
+        onkeydown="if(event.key==='Enter') doLogin(); if(event.key==='Escape') closeLogin()">
       <div class="lock-err" id="pw-err"></div>
     </div>
-    <button class="lock-btn" onclick="doLogin()">🔓 Đăng nhập để chỉnh sửa</button>
-    <button class="lock-view-btn" onclick="viewOnly()">👀 Chỉ xem, không cần mật khẩu</button>
-    <div class="lock-hint">💡 Liên hệ trưởng nhóm để lấy mật khẩu</div>
+    <button class="lock-btn" onclick="doLogin()">🔓 Đăng nhập</button>
+    <button class="lock-view-btn" onclick="closeLogin()">Hủy</button>
+    <div class="lock-hint">💡 Người không đăng nhập vẫn xem được danh sách</div>
   </div>
 </div>
 
-<!-- App chính -->
-<div id="app" style="display:none">
+<!-- App chính: luôn hiển thị ở chế độ xem -->
+<div id="app">
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-icon">🏕️</div>
@@ -176,12 +177,12 @@
       </div>
       <div class="mode-badge" id="mode-badge"></div>
       <div class="stats-pill" id="stats-pill">Đang tải...</div>
-      <button class="logout-btn" onclick="doLogout()">Thoát</button>
+      <button class="logout-btn" id="auth-btn" onclick="handleAuthButton()">Đăng nhập</button>
     </div>
   </div>
 
   <div class="toolbar">
-    <button class="btn btn-primary" id="add-col-btn" onclick="addCol()">+ Thêm bộ chứa</button>
+    <button class="btn btn-primary" id="add-col-btn" onclick="addCol()" disabled>+ Thêm bộ chứa</button>
   </div>
 
   <div class="board-wrap">
@@ -252,10 +253,25 @@ onValue(colsRef, (snap) => {
   if (!data && !initialized) { set(colsRef, DEFAULT_DATA); initialized = true; return; }
   initialized = true;
   colsData = data || {};
-  if (document.getElementById('app').style.display !== 'none') render();
+  render();
 });
 
-// ---- Đăng nhập ----
+// ---- Đăng nhập chỉnh sửa ----
+window.openLogin = () => {
+  const modal = document.getElementById('lock-screen');
+  const inp = document.getElementById('pw-input');
+  const err = document.getElementById('pw-err');
+  err.textContent = '';
+  inp.value = '';
+  modal.classList.add('show');
+  setTimeout(() => inp.focus(), 50);
+};
+
+window.closeLogin = () => {
+  document.getElementById('lock-screen').classList.remove('show');
+  document.getElementById('pw-err').textContent = '';
+};
+
 window.doLogin = () => {
   const val = document.getElementById('pw-input').value;
   const inp = document.getElementById('pw-input');
@@ -263,7 +279,10 @@ window.doLogin = () => {
   if (val === GROUP_PASSWORD) {
     canEdit = true;
     sessionStorage.setItem('dangoai_auth', '1');
-    showApp();
+    closeLogin();
+    updateAuthUI();
+    render();
+    toast('Đã đăng nhập chế độ chỉnh sửa');
   } else {
     inp.classList.add('error');
     err.textContent = 'Mật khẩu không đúng, thử lại nhé!';
@@ -273,43 +292,43 @@ window.doLogin = () => {
   }
 };
 
-window.viewOnly = () => {
-  canEdit = false;
-  sessionStorage.removeItem('dangoai_auth');
-  showApp();
-};
-
 window.doLogout = () => {
   canEdit = false;
   sessionStorage.removeItem('dangoai_auth');
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('lock-screen').style.display = 'flex';
-  document.getElementById('pw-input').value = '';
-  document.getElementById('pw-err').textContent = '';
+  updateAuthUI();
+  render();
+  toast('Đã chuyển sang chế độ chỉ xem');
 };
 
-function showApp() {
-  document.getElementById('lock-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
+window.handleAuthButton = () => {
+  if (canEdit) doLogout();
+  else openLogin();
+};
+
+function updateAuthUI() {
   const badge = document.getElementById('mode-badge');
   const addBtn = document.getElementById('add-col-btn');
+  const authBtn = document.getElementById('auth-btn');
+
   if (canEdit) {
     badge.className = 'mode-badge edit';
-    badge.innerHTML = '<span class="mode-icon">✏️</span> Chế độ chỉnh sửa';
+    badge.innerHTML = '<span class="mode-icon">✏️</span> Chỉnh sửa';
     addBtn.removeAttribute('disabled');
+    authBtn.textContent = 'Đăng xuất';
   } else {
     badge.className = 'mode-badge view';
     badge.innerHTML = '<span class="mode-icon">👀</span> Chỉ xem';
     addBtn.setAttribute('disabled', true);
+    authBtn.textContent = 'Đăng nhập';
   }
-  render();
 }
 
-// Tự đăng nhập lại nếu đã có session
+// Giữ đăng nhập trong tab hiện tại; mặc định người mới mở trang là chỉ xem.
 if (sessionStorage.getItem('dangoai_auth') === '1') {
   canEdit = true;
-  showApp();
 }
+updateAuthUI();
+render();
 
 // ---- Render ----
 function esc(s) {
@@ -346,7 +365,7 @@ function render() {
           <div class="col-dot" style="background:${col.color}"></div>
           <input class="col-title-input" value="${esc(col.title)}"
             ${canEdit ? '' : 'readonly'}
-            onblur="if(window._canEdit) renameCol('${col.id}',this.value)"
+            onblur="if(window._canEdit()) renameCol('${col.id}',this.value)"
             onkeydown="if(event.key==='Enter') this.blur()">
           <span class="col-count">${items.length}</span>
         </div>
