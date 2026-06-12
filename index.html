@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chuẩn bị dã ngoại</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,47 +19,106 @@
   }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
+  /* Lock screen */
+  .lock-screen {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; flex-direction: column; gap: 0;
+  }
+  .lock-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 360px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .lock-icon { font-size: 36px; text-align: center; }
+  .lock-title { font-size: 18px; font-weight: 600; text-align: center; color: var(--text); }
+  .lock-sub { font-size: 13px; color: var(--text3); text-align: center; margin-top: -12px; }
+  .lock-input-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .lock-input {
+    padding: 11px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border2); font-size: 14px;
+    font-family: inherit; background: var(--surface2);
+    color: var(--text); outline: none; letter-spacing: 2px;
+    transition: border-color 0.15s;
+  }
+  .lock-input:focus { border-color: var(--green); background: var(--surface); }
+  .lock-input.error { border-color: var(--danger); animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .lock-err { font-size: 12px; color: var(--danger); text-align: center; min-height: 16px; }
+  .lock-btn {
+    padding: 12px; background: var(--green); color: #fff;
+    border: none; border-radius: var(--radius-sm); font-size: 14px;
+    font-family: inherit; font-weight: 500; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .lock-btn:hover { background: #235e3c; }
+  .lock-hint { font-size: 11px; color: var(--text3); text-align: center; }
+  .lock-view-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 12px; text-align: center;
+    font-family: inherit; padding: 4px; text-decoration: underline;
+  }
+  .lock-view-btn:hover { color: var(--text2); }
+
+  /* Topbar */
   .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .topbar-left { display: flex; align-items: center; gap: 10px; }
   .topbar-icon { width: 30px; height: 30px; background: var(--green); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .topbar-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .topbar-title { font-size: 15px; font-weight: 600; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
   .stats-pill { font-size: 12px; color: var(--text2); background: var(--green-light); border: 1px solid #c5e0ce; padding: 4px 10px; border-radius: 99px; }
   .stats-pill span { font-weight: 600; color: var(--green); }
-
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 6px; transition: background 0.3s; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 5px; transition: background 0.3s; }
   .sync-dot.online { background: var(--green-mid); }
-  .sync-dot.syncing { background: #f0a500; animation: pulse 0.8s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .sync-label { font-size: 12px; color: var(--text3); }
 
+  /* Mode badge */
+  .mode-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; padding: 4px 10px; border-radius: 99px;
+    border: 1px solid; cursor: default;
+  }
+  .mode-badge.edit { background: #fff8e1; border-color: #f0c040; color: #7a5c00; }
+  .mode-badge.view { background: var(--surface2); border-color: var(--border2); color: var(--text3); }
+  .mode-badge .mode-icon { font-size: 11px; }
+  .logout-btn {
+    background: none; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    font-size: 12px; color: var(--text3); padding: 4px 10px; cursor: pointer;
+    font-family: inherit;
+  }
+  .logout-btn:hover { background: var(--danger-light); color: var(--danger); border-color: var(--danger); }
+
+  /* Toolbar */
   .toolbar { padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; cursor: pointer; border: none; transition: background 0.15s; }
   .btn-primary { background: var(--green); color: #fff; font-weight: 500; }
   .btn-primary:hover { background: #235e3c; }
-  .btn-ghost { background: var(--surface); color: var(--text2); border: 1px solid var(--border2); }
-  .btn-ghost:hover { background: var(--surface2); }
+  .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
 
+  /* Board */
   .board-wrap { padding: 0 20px 24px; overflow-x: auto; }
   .board { display: flex; gap: 12px; align-items: flex-start; min-width: max-content; }
-
   .col { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); width: 240px; flex-shrink: 0; }
   .col-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 12px 8px; border-bottom: 1px solid var(--border); background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; }
   .col-title-wrap { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0; }
   .col-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .col-title-input { font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: none; outline: none; font-family: inherit; width: 100%; cursor: pointer; }
-  .col-title-input:focus { background: var(--surface2); padding: 2px 6px; border-radius: 4px; cursor: text; }
+  .col-title-input { font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: none; outline: none; font-family: inherit; width: 100%; }
+  .col-title-input:not([readonly]):focus { background: var(--surface2); padding: 2px 6px; border-radius: 4px; cursor: text; }
+  .col-title-input[readonly] { cursor: default; }
   .col-count { font-size: 11px; color: var(--text3); background: var(--bg); border: 1px solid var(--border); border-radius: 99px; padding: 1px 7px; flex-shrink: 0; }
   .col-del-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 3px; border-radius: 4px; font-size: 14px; line-height: 1; display: flex; align-items: center; }
   .col-del-btn:hover { color: var(--danger); background: var(--danger-light); }
 
   .cards { padding: 8px; display: flex; flex-direction: column; gap: 5px; min-height: 4px; }
-  .card { display: flex; align-items: flex-start; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 10px; transition: box-shadow 0.15s, border-color 0.15s; }
+  .card { display: flex; align-items: flex-start; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 10px; transition: box-shadow 0.15s; }
   .card:hover { box-shadow: var(--shadow); border-color: var(--border2); }
   .card.done { background: var(--surface2); }
   .check-btn { width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid var(--border2); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.15s; padding: 0; }
   .check-btn.done { background: var(--green-mid); border-color: var(--green-mid); }
-  .check-btn.done::after { content: ''; display: block; width: 5px; height: 8px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg) translate(-1px, -1px); }
-  .card-text { font-size: 13px; color: var(--text); flex: 1; min-width: 0; word-break: break-word; line-height: 1.5; outline: none; cursor: text; }
+  .check-btn.done::after { content: ''; display: block; width: 5px; height: 8px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg) translate(-1px,-1px); }
+  .check-btn[disabled] { cursor: default; }
+  .card-text { font-size: 13px; color: var(--text); flex: 1; min-width: 0; word-break: break-word; line-height: 1.5; outline: none; }
   .card.done .card-text { text-decoration: line-through; color: var(--text3); }
   .card-del { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 13px; padding: 2px 3px; border-radius: 3px; opacity: 0; flex-shrink: 0; margin-top: 1px; }
   .card:hover .card-del { opacity: 1; }
@@ -74,7 +132,6 @@
   .add-input { padding: 8px 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--green); font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); outline: none; }
   .add-form-btns { display: flex; gap: 6px; }
   .btn-add-ok { padding: 6px 14px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; cursor: pointer; font-weight: 500; }
-  .btn-add-ok:hover { background: #235e3c; }
   .btn-add-cancel { padding: 6px 10px; background: none; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; color: var(--text2); cursor: pointer; }
   .empty-col { padding: 16px 8px; text-align: center; color: var(--text3); font-size: 12px; font-style: italic; }
 
@@ -88,27 +145,49 @@
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="topbar-icon">🏕️</div>
-    <span class="topbar-title">Chuẩn bị dã ngoại</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px">
-    <div style="display:flex;align-items:center">
-      <span class="sync-dot" id="sync-dot"></span>
-      <span class="sync-label" id="sync-label">Đang kết nối...</span>
+<!-- Màn hình khóa -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-icon">🏕️</div>
+    <div class="lock-title">Chuẩn bị dã ngoại</div>
+    <div class="lock-sub">Nhập mật khẩu để chỉnh sửa, hoặc xem không cần mật khẩu</div>
+    <div class="lock-input-wrap">
+      <input class="lock-input" type="password" id="pw-input" placeholder="Mật khẩu nhóm..."
+        onkeydown="if(event.key==='Enter') doLogin()">
+      <div class="lock-err" id="pw-err"></div>
     </div>
-    <div class="stats-pill" id="stats-pill">Đang tải...</div>
+    <button class="lock-btn" onclick="doLogin()">🔓 Đăng nhập để chỉnh sửa</button>
+    <button class="lock-view-btn" onclick="viewOnly()">👀 Chỉ xem, không cần mật khẩu</button>
+    <div class="lock-hint">💡 Liên hệ trưởng nhóm để lấy mật khẩu</div>
   </div>
 </div>
 
-<div class="toolbar">
-  <button class="btn btn-primary" onclick="addCol()">+ Thêm bộ chứa</button>
-</div>
+<!-- App chính -->
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-icon">🏕️</div>
+      <span class="topbar-title">Chuẩn bị dã ngoại</span>
+    </div>
+    <div class="topbar-right">
+      <div style="display:flex;align-items:center">
+        <span class="sync-dot" id="sync-dot"></span>
+        <span class="sync-label" id="sync-label">Đang kết nối...</span>
+      </div>
+      <div class="mode-badge" id="mode-badge"></div>
+      <div class="stats-pill" id="stats-pill">Đang tải...</div>
+      <button class="logout-btn" onclick="doLogout()">Thoát</button>
+    </div>
+  </div>
 
-<div class="board-wrap">
-  <div class="board" id="board">
-    <div class="loading"><div class="spinner"></div> Đang tải dữ liệu...</div>
+  <div class="toolbar">
+    <button class="btn btn-primary" id="add-col-btn" onclick="addCol()">+ Thêm bộ chứa</button>
+  </div>
+
+  <div class="board-wrap">
+    <div class="board" id="board">
+      <div class="loading"><div class="spinner"></div> Đang tải dữ liệu...</div>
+    </div>
   </div>
 </div>
 
@@ -127,6 +206,10 @@ const firebaseConfig = {
   messagingSenderId: "638214784405",
   appId: "1:638214784405:web:5b945af3ae4112abd8629c"
 };
+
+// ============ ĐỔI MẬT KHẨU Ở ĐÂY ============
+const GROUP_PASSWORD = "dangoai2025";
+// =============================================
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -150,101 +233,143 @@ const DEFAULT_DATA = {
 
 let colsData = {};
 let initialized = false;
+let canEdit = false;
 
-// Trạng thái kết nối
+// Kết nối Firebase
 const connRef = ref(db, '.info/connected');
 onValue(connRef, (snap) => {
   const online = snap.val();
   const dot = document.getElementById('sync-dot');
   const label = document.getElementById('sync-label');
-  if (online) {
-    dot.className = 'sync-dot online';
-    label.textContent = 'Đã kết nối';
-  } else {
-    dot.className = 'sync-dot';
-    label.textContent = 'Mất kết nối';
+  if (dot) {
+    dot.className = 'sync-dot' + (online ? ' online' : '');
+    label.textContent = online ? 'Đã kết nối' : 'Mất kết nối';
   }
 });
 
-// Lắng nghe dữ liệu realtime
 onValue(colsRef, (snap) => {
   const data = snap.val();
-  if (!data && !initialized) {
-    set(colsRef, DEFAULT_DATA);
-    initialized = true;
-    return;
-  }
+  if (!data && !initialized) { set(colsRef, DEFAULT_DATA); initialized = true; return; }
   initialized = true;
   colsData = data || {};
-  render();
+  if (document.getElementById('app').style.display !== 'none') render();
 });
 
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2000);
+// ---- Đăng nhập ----
+window.doLogin = () => {
+  const val = document.getElementById('pw-input').value;
+  const inp = document.getElementById('pw-input');
+  const err = document.getElementById('pw-err');
+  if (val === GROUP_PASSWORD) {
+    canEdit = true;
+    sessionStorage.setItem('dangoai_auth', '1');
+    showApp();
+  } else {
+    inp.classList.add('error');
+    err.textContent = 'Mật khẩu không đúng, thử lại nhé!';
+    setTimeout(() => inp.classList.remove('error'), 400);
+    inp.value = '';
+    inp.focus();
+  }
+};
+
+window.viewOnly = () => {
+  canEdit = false;
+  sessionStorage.removeItem('dangoai_auth');
+  showApp();
+};
+
+window.doLogout = () => {
+  canEdit = false;
+  sessionStorage.removeItem('dangoai_auth');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('lock-screen').style.display = 'flex';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-err').textContent = '';
+};
+
+function showApp() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const badge = document.getElementById('mode-badge');
+  const addBtn = document.getElementById('add-col-btn');
+  if (canEdit) {
+    badge.className = 'mode-badge edit';
+    badge.innerHTML = '<span class="mode-icon">✏️</span> Chế độ chỉnh sửa';
+    addBtn.removeAttribute('disabled');
+  } else {
+    badge.className = 'mode-badge view';
+    badge.innerHTML = '<span class="mode-icon">👀</span> Chỉ xem';
+    addBtn.setAttribute('disabled', true);
+  }
+  render();
+}
+
+// Tự đăng nhập lại nếu đã có session
+if (sessionStorage.getItem('dangoai_auth') === '1') {
+  canEdit = true;
+  showApp();
+}
+
+// ---- Render ----
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function getSortedCols() {
-  return Object.entries(colsData)
-    .map(([id, col]) => ({ id, ...col }))
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  return Object.entries(colsData).map(([id,col])=>({id,...col})).sort((a,b)=>(a.order||0)-(b.order||0));
 }
-
 function getSortedItems(items) {
   if (!items) return [];
-  return Object.entries(items)
-    .map(([id, item]) => ({ id, ...item }))
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  return Object.entries(items).map(([id,item])=>({id,...item})).sort((a,b)=>(a.order||0)-(b.order||0));
 }
 
 function updateStats() {
-  let total = 0, done = 0;
+  let total=0, done=0;
   Object.values(colsData).forEach(col => {
-    if (col.items) Object.values(col.items).forEach(item => {
-      total++; if (item.done) done++;
-    });
+    if (col.items) Object.values(col.items).forEach(item => { total++; if(item.done) done++; });
   });
   const el = document.getElementById('stats-pill');
-  el.innerHTML = total ? `<span>${done}/${total}</span> đã xong` : 'Chưa có tác vụ';
+  if (el) el.innerHTML = total ? `<span>${done}/${total}</span> đã xong` : 'Chưa có tác vụ';
 }
 
 function render() {
   const board = document.getElementById('board');
   board.innerHTML = '';
-  const cols = getSortedCols();
-  cols.forEach(col => {
+  getSortedCols().forEach(col => {
     const items = getSortedItems(col.items);
-    const colEl = document.createElement('div');
-    colEl.className = 'col';
-    colEl.innerHTML = `
+    const el = document.createElement('div');
+    el.className = 'col';
+    el.innerHTML = `
       <div class="col-head">
         <div class="col-title-wrap">
           <div class="col-dot" style="background:${col.color}"></div>
           <input class="col-title-input" value="${esc(col.title)}"
-            onblur="renameCol('${col.id}', this.value)"
+            ${canEdit ? '' : 'readonly'}
+            onblur="if(window._canEdit) renameCol('${col.id}',this.value)"
             onkeydown="if(event.key==='Enter') this.blur()">
           <span class="col-count">${items.length}</span>
         </div>
-        <button class="col-del-btn" onclick="delCol('${col.id}')" title="Xóa">✕</button>
+        ${canEdit ? `<button class="col-del-btn" onclick="delCol('${col.id}')">✕</button>` : ''}
       </div>
       <div class="cards">
         ${items.length === 0
           ? '<div class="empty-col">Chưa có tác vụ nào</div>'
           : items.map(item => `
-          <div class="card${item.done ? ' done' : ''}">
-            <button class="check-btn${item.done ? ' done' : ''}"
-              onclick="toggleItem('${col.id}','${item.id}')"></button>
-            <div class="card-text" contenteditable="true" spellcheck="false"
+          <div class="card${item.done?' done':''}">
+            <button class="check-btn${item.done?' done':''}"
+              onclick="toggleItem('${col.id}','${item.id}')"
+              ${canEdit?'':'disabled'}></button>
+            <div class="card-text"
+              ${canEdit ? `contenteditable="true" spellcheck="false"
               onblur="editItem('${col.id}','${item.id}',this.innerText.trim())"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"` : ''}
             >${esc(item.text)}</div>
-            <button class="card-del" onclick="delItem('${col.id}','${item.id}')">✕</button>
+            ${canEdit ? `<button class="card-del" onclick="delItem('${col.id}','${item.id}')">✕</button>` : ''}
           </div>`).join('')}
       </div>
       <div class="add-area">
+        ${canEdit ? `
         <button class="add-trigger" onclick="showAdd('${col.id}')">+ Thêm tác vụ</button>
         <div class="add-form" id="addform-${col.id}">
           <input class="add-input" id="addinput-${col.id}" placeholder="Tên tác vụ..."
@@ -253,74 +378,51 @@ function render() {
             <button class="btn-add-ok" onclick="confirmAdd('${col.id}')">Thêm</button>
             <button class="btn-add-cancel" onclick="cancelAdd('${col.id}')">Huỷ</button>
           </div>
-        </div>
+        </div>` : ''}
       </div>`;
-    board.appendChild(colEl);
+    board.appendChild(el);
   });
   updateStats();
 }
 
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-window.renameCol = (cid, val) => {
-  if (val.trim()) update(ref(db, `cols/${cid}`), { title: val.trim() });
-};
-
-window.delCol = (cid) => {
-  if (!confirm('Xóa bộ chứa này?')) return;
-  remove(ref(db, `cols/${cid}`));
-  toast('Đã xóa bộ chứa');
-};
-
+// ---- Actions ----
+window._canEdit = () => canEdit;
+window.renameCol = (cid, val) => { if (canEdit && val.trim()) update(ref(db,`cols/${cid}`),{title:val.trim()}); };
+window.delCol = (cid) => { if (!canEdit || !confirm('Xóa bộ chứa này?')) return; remove(ref(db,`cols/${cid}`)); toast('Đã xóa bộ chứa'); };
 window.addCol = () => {
+  if (!canEdit) return;
   const cols = getSortedCols();
   const color = COLORS[cols.length % COLORS.length];
-  const newRef = push(ref(db, 'cols'));
-  set(newRef, { title: 'Bộ chứa mới', color, order: cols.length, items: {} });
-  setTimeout(() => {
-    const inputs = document.querySelectorAll('.col-title-input');
-    const last = inputs[inputs.length - 1];
-    if (last) { last.focus(); last.select(); }
-  }, 300);
+  const newRef = push(ref(db,'cols'));
+  set(newRef,{title:'Bộ chứa mới',color,order:cols.length,items:{}});
+  setTimeout(()=>{ const inputs=document.querySelectorAll('.col-title-input'); const last=inputs[inputs.length-1]; if(last){last.focus();last.select();} },300);
 };
-
 window.toggleItem = (cid, iid) => {
+  if (!canEdit) return;
   const item = colsData[cid]?.items?.[iid];
   if (!item) return;
-  update(ref(db, `cols/${cid}/items/${iid}`), { done: !item.done });
+  update(ref(db,`cols/${cid}/items/${iid}`),{done:!item.done});
   if (!item.done) toast('✓ ' + item.text);
 };
-
-window.delItem = (cid, iid) => {
-  remove(ref(db, `cols/${cid}/items/${iid}`));
-};
-
-window.editItem = (cid, iid, val) => {
-  if (val) update(ref(db, `cols/${cid}/items/${iid}`), { text: val });
-};
-
-window.showAdd = (cid) => {
-  document.getElementById('addform-' + cid).classList.add('show');
-  document.getElementById('addinput-' + cid).focus();
-};
-
-window.cancelAdd = (cid) => {
-  document.getElementById('addform-' + cid).classList.remove('show');
-  document.getElementById('addinput-' + cid).value = '';
-};
-
+window.delItem = (cid, iid) => { if (canEdit) remove(ref(db,`cols/${cid}/items/${iid}`)); };
+window.editItem = (cid, iid, val) => { if (canEdit && val) update(ref(db,`cols/${cid}/items/${iid}`),{text:val}); };
+window.showAdd = (cid) => { document.getElementById('addform-'+cid).classList.add('show'); document.getElementById('addinput-'+cid).focus(); };
+window.cancelAdd = (cid) => { document.getElementById('addform-'+cid).classList.remove('show'); document.getElementById('addinput-'+cid).value=''; };
 window.confirmAdd = (cid) => {
-  const inp = document.getElementById('addinput-' + cid);
+  const inp = document.getElementById('addinput-'+cid);
   const val = inp.value.trim();
   if (!val) { cancelAdd(cid); return; }
   const items = colsData[cid]?.items || {};
-  const order = Object.keys(items).length;
-  push(ref(db, `cols/${cid}/items`), { text: val, done: false, order });
+  push(ref(db,`cols/${cid}/items`),{text:val,done:false,order:Object.keys(items).length});
   inp.value = '';
-  setTimeout(() => showAdd(cid), 100);
+  setTimeout(()=>showAdd(cid),100);
 };
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'),2000);
+}
 </script>
 </body>
 </html>
