@@ -9,273 +9,80 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #f0f4f0;
-    --surface: #ffffff;
-    --surface2: #f7f9f7;
-    --border: #e2e8e2;
-    --border2: #d0d8d0;
-    --text: #1a2e1a;
-    --text2: #4a6050;
-    --text3: #8aa090;
-    --green: #2d7a4f;
-    --green-light: #e8f5ee;
-    --green-mid: #4caf7a;
-    --danger: #c0392b;
-    --danger-light: #fdecea;
+    --bg: #f0f4f0; --surface: #ffffff; --surface2: #f7f9f7;
+    --border: #e2e8e2; --border2: #d0d8d0;
+    --text: #1a2e1a; --text2: #4a6050; --text3: #8aa090;
+    --green: #2d7a4f; --green-light: #e8f5ee; --green-mid: #4caf7a;
+    --danger: #c0392b; --danger-light: #fdecea;
     --shadow: 0 1px 3px rgba(0,0,0,0.08);
-    --radius: 10px;
-    --radius-sm: 6px;
+    --radius: 10px; --radius-sm: 6px;
   }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* Header */
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .topbar-left { display: flex; align-items: center; gap: 10px; }
-  .topbar-icon {
-    width: 30px; height: 30px;
-    background: var(--green);
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-  }
+  .topbar-icon { width: 30px; height: 30px; background: var(--green); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 16px; }
   .topbar-title { font-size: 15px; font-weight: 600; color: var(--text); }
-  .topbar-right { display: flex; align-items: center; gap: 8px; }
-  .stats-pill {
-    font-size: 12px;
-    color: var(--text2);
-    background: var(--green-light);
-    border: 1px solid #c5e0ce;
-    padding: 4px 10px;
-    border-radius: 99px;
-  }
+  .stats-pill { font-size: 12px; color: var(--text2); background: var(--green-light); border: 1px solid #c5e0ce; padding: 4px 10px; border-radius: 99px; }
   .stats-pill span { font-weight: 600; color: var(--green); }
 
-  /* Toolbar */
-  .toolbar {
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-family: inherit;
-    cursor: pointer;
-    border: none;
-    transition: background 0.15s, opacity 0.15s;
-  }
-  .btn-primary {
-    background: var(--green);
-    color: #fff;
-    font-weight: 500;
-  }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 6px; transition: background 0.3s; }
+  .sync-dot.online { background: var(--green-mid); }
+  .sync-dot.syncing { background: #f0a500; animation: pulse 0.8s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .sync-label { font-size: 12px; color: var(--text3); }
+
+  .toolbar { padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; cursor: pointer; border: none; transition: background 0.15s; }
+  .btn-primary { background: var(--green); color: #fff; font-weight: 500; }
   .btn-primary:hover { background: #235e3c; }
-  .btn-ghost {
-    background: var(--surface);
-    color: var(--text2);
-    border: 1px solid var(--border2);
-  }
+  .btn-ghost { background: var(--surface); color: var(--text2); border: 1px solid var(--border2); }
   .btn-ghost:hover { background: var(--surface2); }
 
-  /* Board */
   .board-wrap { padding: 0 20px 24px; overflow-x: auto; }
-  .board {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    min-width: max-content;
-  }
+  .board { display: flex; gap: 12px; align-items: flex-start; min-width: max-content; }
 
-  /* Column */
-  .col {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    width: 240px;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-  .col-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 12px 8px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-  }
+  .col { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); width: 240px; flex-shrink: 0; }
+  .col-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 12px 8px; border-bottom: 1px solid var(--border); background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; }
   .col-title-wrap { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0; }
-  .col-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .col-title-input {
-    font-size: 13px; font-weight: 600;
-    color: var(--text);
-    background: transparent;
-    border: none; outline: none;
-    font-family: inherit;
-    width: 100%;
-    cursor: pointer;
-  }
-  .col-title-input:focus {
-    background: var(--surface2);
-    padding: 2px 6px;
-    border-radius: 4px;
-    cursor: text;
-  }
-  .col-count {
-    font-size: 11px;
-    color: var(--text3);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 1px 7px;
-    flex-shrink: 0;
-  }
-  .col-del-btn {
-    background: none; border: none; cursor: pointer;
-    color: var(--text3); padding: 3px; border-radius: 4px;
-    font-size: 14px; line-height: 1; display: flex; align-items: center;
-    flex-shrink: 0;
-  }
+  .col-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .col-title-input { font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: none; outline: none; font-family: inherit; width: 100%; cursor: pointer; }
+  .col-title-input:focus { background: var(--surface2); padding: 2px 6px; border-radius: 4px; cursor: text; }
+  .col-count { font-size: 11px; color: var(--text3); background: var(--bg); border: 1px solid var(--border); border-radius: 99px; padding: 1px 7px; flex-shrink: 0; }
+  .col-del-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 3px; border-radius: 4px; font-size: 14px; line-height: 1; display: flex; align-items: center; }
   .col-del-btn:hover { color: var(--danger); background: var(--danger-light); }
 
-  /* Cards */
   .cards { padding: 8px; display: flex; flex-direction: column; gap: 5px; min-height: 4px; }
-  .card {
-    display: flex; align-items: flex-start; gap: 8px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 9px 10px;
-    transition: box-shadow 0.15s, border-color 0.15s;
-    cursor: default;
-  }
+  .card { display: flex; align-items: flex-start; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 10px; transition: box-shadow 0.15s, border-color 0.15s; }
   .card:hover { box-shadow: var(--shadow); border-color: var(--border2); }
   .card.done { background: var(--surface2); }
-  .check-btn {
-    width: 17px; height: 17px; border-radius: 50%;
-    border: 1.5px solid var(--border2);
-    background: transparent;
-    cursor: pointer; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    margin-top: 1px;
-    transition: all 0.15s;
-    padding: 0;
-  }
-  .check-btn.done {
-    background: var(--green-mid);
-    border-color: var(--green-mid);
-  }
-  .check-btn.done::after {
-    content: '';
-    display: block;
-    width: 5px; height: 8px;
-    border-right: 2px solid #fff;
-    border-bottom: 2px solid #fff;
-    transform: rotate(45deg) translate(-1px, -1px);
-  }
-  .card-text {
-    font-size: 13px; color: var(--text);
-    flex: 1; min-width: 0;
-    word-break: break-word;
-    line-height: 1.5;
-    outline: none;
-    cursor: text;
-  }
-  .card.done .card-text {
-    text-decoration: line-through;
-    color: var(--text3);
-  }
-  .card-del {
-    background: none; border: none; cursor: pointer;
-    color: var(--text3); font-size: 13px;
-    padding: 2px 3px; border-radius: 3px;
-    opacity: 0; flex-shrink: 0; margin-top: 1px;
-    line-height: 1;
-  }
+  .check-btn { width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid var(--border2); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.15s; padding: 0; }
+  .check-btn.done { background: var(--green-mid); border-color: var(--green-mid); }
+  .check-btn.done::after { content: ''; display: block; width: 5px; height: 8px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg) translate(-1px, -1px); }
+  .card-text { font-size: 13px; color: var(--text); flex: 1; min-width: 0; word-break: break-word; line-height: 1.5; outline: none; cursor: text; }
+  .card.done .card-text { text-decoration: line-through; color: var(--text3); }
+  .card-del { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 13px; padding: 2px 3px; border-radius: 3px; opacity: 0; flex-shrink: 0; margin-top: 1px; }
   .card:hover .card-del { opacity: 1; }
   .card-del:hover { color: var(--danger); background: var(--danger-light); }
 
-  /* Add card */
   .add-area { padding: 0 8px 8px; }
-  .add-trigger {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 6px;
-    color: var(--text3); font-size: 13px;
-    cursor: pointer; border-radius: var(--radius-sm);
-    border: none; background: none; font-family: inherit;
-    width: 100%;
-    transition: background 0.15s, color 0.15s;
-  }
+  .add-trigger { display: flex; align-items: center; gap: 6px; padding: 7px 6px; color: var(--text3); font-size: 13px; cursor: pointer; border-radius: var(--radius-sm); border: none; background: none; font-family: inherit; width: 100%; transition: background 0.15s, color 0.15s; }
   .add-trigger:hover { background: var(--border); color: var(--text2); }
   .add-form { display: none; flex-direction: column; gap: 6px; }
   .add-form.show { display: flex; }
-  .add-input {
-    padding: 8px 10px;
-    border-radius: var(--radius-sm);
-    border: 1.5px solid var(--green);
-    font-size: 13px; font-family: inherit;
-    background: var(--surface);
-    color: var(--text);
-    outline: none;
-  }
+  .add-input { padding: 8px 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--green); font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); outline: none; }
   .add-form-btns { display: flex; gap: 6px; }
-  .btn-add-ok {
-    padding: 6px 14px;
-    background: var(--green); color: #fff;
-    border: none; border-radius: var(--radius-sm);
-    font-size: 13px; font-family: inherit;
-    cursor: pointer; font-weight: 500;
-  }
+  .btn-add-ok { padding: 6px 14px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; cursor: pointer; font-weight: 500; }
   .btn-add-ok:hover { background: #235e3c; }
-  .btn-add-cancel {
-    padding: 6px 10px;
-    background: none;
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-sm);
-    font-size: 13px; font-family: inherit;
-    color: var(--text2); cursor: pointer;
-  }
-  .btn-add-cancel:hover { background: var(--surface2); }
+  .btn-add-cancel { padding: 6px 10px; background: none; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; color: var(--text2); cursor: pointer; }
+  .empty-col { padding: 16px 8px; text-align: center; color: var(--text3); font-size: 12px; font-style: italic; }
 
-  /* Empty state */
-  .empty-col {
-    padding: 16px 8px;
-    text-align: center;
-    color: var(--text3);
-    font-size: 12px;
-    font-style: italic;
-  }
+  .loading { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--text3); font-size: 14px; gap: 10px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Toast */
-  .toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px);
-    background: var(--text); color: #fff;
-    padding: 10px 18px; border-radius: 99px;
-    font-size: 13px; transition: transform 0.25s ease;
-    z-index: 999; pointer-events: none; white-space: nowrap;
-  }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--text); color: #fff; padding: 10px 18px; border-radius: 99px; font-size: 13px; transition: transform 0.25s ease; z-index: 999; pointer-events: none; white-space: nowrap; }
   .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
@@ -286,61 +93,91 @@
     <div class="topbar-icon">🏕️</div>
     <span class="topbar-title">Chuẩn bị dã ngoại</span>
   </div>
-  <div class="topbar-right">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="display:flex;align-items:center">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span class="sync-label" id="sync-label">Đang kết nối...</span>
+    </div>
     <div class="stats-pill" id="stats-pill">Đang tải...</div>
   </div>
 </div>
 
 <div class="toolbar">
   <button class="btn btn-primary" onclick="addCol()">+ Thêm bộ chứa</button>
-  <button class="btn btn-ghost" onclick="resetAll()">↺ Đặt lại</button>
 </div>
 
 <div class="board-wrap">
-  <div class="board" id="board"></div>
+  <div class="board" id="board">
+    <div class="loading"><div class="spinner"></div> Đang tải dữ liệu...</div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD-sXUehkPxSP2_aTpOulu",
+  authDomain: "dangoai.firebaseapp.com",
+  databaseURL: "https://dangoai-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "dangoai",
+  storageBucket: "dangoai.appspot.com",
+  messagingSenderId: "638214784405",
+  appId: "1:638214784405:web:5b945af3ae4112abd8629c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const colsRef = ref(db, 'cols');
+
 const COLORS = ['#2d7a4f','#2563eb','#d97706','#dc2626','#7c3aed','#0891b2','#be185d','#059669'];
-const STORAGE_KEY = 'dangoai_v2';
+const DEFAULT_DATA = {
+  c1: { title: 'Salad trộn', color: '#2d7a4f', order: 0, items: {
+    i1:{text:'Bắp',done:false,order:0}, i2:{text:'Bắp cải tím',done:false,order:1},
+    i3:{text:'Cà chua bi',done:false,order:2}, i4:{text:'Rau xà lách',done:false,order:3},
+    i5:{text:'Sốt Salad',done:false,order:4}
+  }},
+  c2: { title: 'Bánh mì nướng', color: '#d97706', order: 1, items: {} },
+  c3: { title: 'Trái cây', color: '#2563eb', order: 2, items: {
+    i6:{text:'Quýt: 5kg',done:false,order:0}, i7:{text:'Dưa lưới: 3 trái',done:false,order:1},
+    i8:{text:'Dưa hấu: 7 trái',done:false,order:2}, i9:{text:'Xoài: 7kg',done:false,order:3},
+    i10:{text:'Táo: 5kg',done:false,order:4}, i11:{text:'Ổi: 5kg',done:false,order:5}
+  }},
+  c4: { title: 'Thịt xiên', color: '#dc2626', order: 3, items: {} }
+};
 
-const DEFAULT_DATA = [
-  { id: 'c1', title: 'Salad trộn', color: '#2d7a4f', items: [
-    { id: 'i1', text: 'Bắp', done: false },
-    { id: 'i2', text: 'Bắp cải tím', done: false },
-    { id: 'i3', text: 'Cà chua bi', done: false },
-    { id: 'i4', text: 'Rau xà lách', done: false },
-    { id: 'i5', text: 'Sốt Salad', done: false },
-  ]},
-  { id: 'c2', title: 'Bánh mì nướng', color: '#d97706', items: [] },
-  { id: 'c3', title: 'Trái cây', color: '#2563eb', items: [
-    { id: 'i6', text: 'Quýt: 5kg', done: false },
-    { id: 'i7', text: 'Dưa lưới: 3 trái', done: false },
-    { id: 'i8', text: 'Dưa hấu: 7 trái', done: false },
-    { id: 'i9', text: 'Xoài: 7kg', done: false },
-    { id: 'i10', text: 'Táo: 5kg', done: false },
-    { id: 'i11', text: 'Ổi: 5kg', done: false },
-  ]},
-  { id: 'c4', title: 'Thịt xiên', color: '#dc2626', items: [] },
-];
+let colsData = {};
+let initialized = false;
 
-let uid = Date.now();
-let cols = load();
-
-function load() {
-  try {
-    const d = localStorage.getItem(STORAGE_KEY);
-    return d ? JSON.parse(d) : JSON.parse(JSON.stringify(DEFAULT_DATA));
-  } catch(e) {
-    return JSON.parse(JSON.stringify(DEFAULT_DATA));
+// Trạng thái kết nối
+const connRef = ref(db, '.info/connected');
+onValue(connRef, (snap) => {
+  const online = snap.val();
+  const dot = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  if (online) {
+    dot.className = 'sync-dot online';
+    label.textContent = 'Đã kết nối';
+  } else {
+    dot.className = 'sync-dot';
+    label.textContent = 'Mất kết nối';
   }
-}
+});
 
-function save() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cols)); } catch(e) {}
-}
+// Lắng nghe dữ liệu realtime
+onValue(colsRef, (snap) => {
+  const data = snap.val();
+  if (!data && !initialized) {
+    set(colsRef, DEFAULT_DATA);
+    initialized = true;
+    return;
+  }
+  initialized = true;
+  colsData = data || {};
+  render();
+});
 
 function toast(msg) {
   const el = document.getElementById('toast');
@@ -350,51 +187,61 @@ function toast(msg) {
   el._t = setTimeout(() => el.classList.remove('show'), 2000);
 }
 
+function getSortedCols() {
+  return Object.entries(colsData)
+    .map(([id, col]) => ({ id, ...col }))
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+
+function getSortedItems(items) {
+  if (!items) return [];
+  return Object.entries(items)
+    .map(([id, item]) => ({ id, ...item }))
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+
 function updateStats() {
-  const total = cols.reduce((a, c) => a + c.items.length, 0);
-  const done = cols.reduce((a, c) => a + c.items.filter(i => i.done).length, 0);
+  let total = 0, done = 0;
+  Object.values(colsData).forEach(col => {
+    if (col.items) Object.values(col.items).forEach(item => {
+      total++; if (item.done) done++;
+    });
+  });
   const el = document.getElementById('stats-pill');
-  if (total === 0) {
-    el.innerHTML = 'Chưa có tác vụ';
-  } else {
-    el.innerHTML = `<span>${done}/${total}</span> đã xong`;
-  }
+  el.innerHTML = total ? `<span>${done}/${total}</span> đã xong` : 'Chưa có tác vụ';
 }
 
 function render() {
   const board = document.getElementById('board');
   board.innerHTML = '';
+  const cols = getSortedCols();
   cols.forEach(col => {
+    const items = getSortedItems(col.items);
     const colEl = document.createElement('div');
     colEl.className = 'col';
-    colEl.id = 'col-' + col.id;
-
-    const doneCount = col.items.filter(i => i.done).length;
-
     colEl.innerHTML = `
       <div class="col-head">
         <div class="col-title-wrap">
           <div class="col-dot" style="background:${col.color}"></div>
-          <input class="col-title-input" value="${escHtml(col.title)}"
+          <input class="col-title-input" value="${esc(col.title)}"
             onblur="renameCol('${col.id}', this.value)"
             onkeydown="if(event.key==='Enter') this.blur()">
-          <span class="col-count">${col.items.length}</span>
+          <span class="col-count">${items.length}</span>
         </div>
-        <button class="col-del-btn" onclick="delCol('${col.id}')" title="Xóa bộ chứa">✕</button>
+        <button class="col-del-btn" onclick="delCol('${col.id}')" title="Xóa">✕</button>
       </div>
-      <div class="cards" id="cards-${col.id}">
-        ${col.items.length === 0
+      <div class="cards">
+        ${items.length === 0
           ? '<div class="empty-col">Chưa có tác vụ nào</div>'
-          : col.items.map(item => `
-          <div class="card${item.done ? ' done' : ''}" id="card-${item.id}">
+          : items.map(item => `
+          <div class="card${item.done ? ' done' : ''}">
             <button class="check-btn${item.done ? ' done' : ''}"
-              onclick="toggleItem('${col.id}','${item.id}')"
-              title="${item.done ? 'Bỏ hoàn thành' : 'Đánh dấu xong'}"></button>
+              onclick="toggleItem('${col.id}','${item.id}')"></button>
             <div class="card-text" contenteditable="true" spellcheck="false"
               onblur="editItem('${col.id}','${item.id}',this.innerText.trim())"
               onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
-            >${escHtml(item.text)}</div>
-            <button class="card-del" onclick="delItem('${col.id}','${item.id}')" title="Xóa">✕</button>
+            >${esc(item.text)}</div>
+            <button class="card-del" onclick="delItem('${col.id}','${item.id}')">✕</button>
           </div>`).join('')}
       </div>
       <div class="add-area">
@@ -407,90 +254,73 @@ function render() {
             <button class="btn-add-cancel" onclick="cancelAdd('${col.id}')">Huỷ</button>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
     board.appendChild(colEl);
   });
   updateStats();
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function renameCol(cid, val) {
-  const c = cols.find(c => c.id === cid);
-  if (c && val.trim()) { c.title = val.trim(); save(); updateStats(); }
-}
+window.renameCol = (cid, val) => {
+  if (val.trim()) update(ref(db, `cols/${cid}`), { title: val.trim() });
+};
 
-function delCol(cid) {
+window.delCol = (cid) => {
   if (!confirm('Xóa bộ chứa này?')) return;
-  cols = cols.filter(c => c.id !== cid);
-  save(); render();
+  remove(ref(db, `cols/${cid}`));
   toast('Đã xóa bộ chứa');
-}
+};
 
-function addCol() {
+window.addCol = () => {
+  const cols = getSortedCols();
   const color = COLORS[cols.length % COLORS.length];
-  cols.push({ id: 'c' + (++uid), title: 'Bộ chứa mới', color, items: [] });
-  save(); render();
+  const newRef = push(ref(db, 'cols'));
+  set(newRef, { title: 'Bộ chứa mới', color, order: cols.length, items: {} });
   setTimeout(() => {
     const inputs = document.querySelectorAll('.col-title-input');
     const last = inputs[inputs.length - 1];
     if (last) { last.focus(); last.select(); }
-  }, 50);
-}
+  }, 300);
+};
 
-function toggleItem(cid, iid) {
-  const c = cols.find(c => c.id === cid);
-  const item = c && c.items.find(i => i.id === iid);
+window.toggleItem = (cid, iid) => {
+  const item = colsData[cid]?.items?.[iid];
   if (!item) return;
-  item.done = !item.done;
-  save(); render();
-  if (item.done) toast('✓ Đã hoàn thành: ' + item.text);
-}
+  update(ref(db, `cols/${cid}/items/${iid}`), { done: !item.done });
+  if (!item.done) toast('✓ ' + item.text);
+};
 
-function delItem(cid, iid) {
-  const c = cols.find(c => c.id === cid);
-  if (!c) return;
-  c.items = c.items.filter(i => i.id !== iid);
-  save(); render();
-}
+window.delItem = (cid, iid) => {
+  remove(ref(db, `cols/${cid}/items/${iid}`));
+};
 
-function editItem(cid, iid, val) {
-  const c = cols.find(c => c.id === cid);
-  const item = c && c.items.find(i => i.id === iid);
-  if (item && val) { item.text = val; save(); }
-}
+window.editItem = (cid, iid, val) => {
+  if (val) update(ref(db, `cols/${cid}/items/${iid}`), { text: val });
+};
 
-function showAdd(cid) {
+window.showAdd = (cid) => {
   document.getElementById('addform-' + cid).classList.add('show');
   document.getElementById('addinput-' + cid).focus();
-}
+};
 
-function cancelAdd(cid) {
+window.cancelAdd = (cid) => {
   document.getElementById('addform-' + cid).classList.remove('show');
   document.getElementById('addinput-' + cid).value = '';
-}
+};
 
-function confirmAdd(cid) {
+window.confirmAdd = (cid) => {
   const inp = document.getElementById('addinput-' + cid);
   const val = inp.value.trim();
   if (!val) { cancelAdd(cid); return; }
-  const c = cols.find(c => c.id === cid);
-  c.items.push({ id: 'i' + (++uid), text: val, done: false });
-  save(); render();
-  setTimeout(() => showAdd(cid), 30);
-}
-
-function resetAll() {
-  if (!confirm('Đặt lại tất cả về dữ liệu ban đầu?')) return;
-  cols = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  save(); render();
-  toast('Đã đặt lại dữ liệu');
-}
-
-render();
+  const items = colsData[cid]?.items || {};
+  const order = Object.keys(items).length;
+  push(ref(db, `cols/${cid}/items`), { text: val, done: false, order });
+  inp.value = '';
+  setTimeout(() => showAdd(cid), 100);
+};
 </script>
 </body>
 </html>
